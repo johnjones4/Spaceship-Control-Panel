@@ -11,6 +11,9 @@ void Application::init() {
 void Application::step() {
   t_mode nextMode = this->systemIO->getModeSelection();
   if (this->currentMode == NULL || nextMode != this->currentModeType) {
+    if (this->currentMode != NULL) {
+      free(this->currentMode);
+    }
     this->currentMode = this->modeFactory(nextMode);
     this->currentModeType = nextMode;
     this->currentMode->reset();

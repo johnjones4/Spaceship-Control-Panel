@@ -42,7 +42,7 @@ void ModeLand::step() {
                 break;
             }
 
-            double thrustPcnt = abs(this->systemIo->getThrottle());
+            double thrustPcnt = pow(this->systemIo->getThrottle(), 2);
             this->fuel = this->fuel - (thrustPcnt * FUEL_USAGE_RATE) * deltaTime;
             thrustAccel = (MAX_THRUST * pow(1 - (this->fuel / FUEL_INITIAL), 2)) * thrustPcnt;
         }
@@ -52,21 +52,31 @@ void ModeLand::step() {
         this->lastStep = now;
     }
 
-    bool isDown = this->altitude < ALTITUDE_MIN;
+    bool isDown = this->altitude <= ALTITUDE_MIN;
     bool isOverun = isDown && (abs(this->deltaZ) > MIN_ABS_DELTA || abs(this->deltaX) > MIN_ABS_DELTA || abs(this->deltaY) > MIN_ABS_DELTA);
 
     this->systemIo->setAltitude((int)this->altitude);
     this->systemIo->setFuel(this->fuel > 0 ? (int)this->fuel : 0);
     this->systemIo->setFuelLight(this->fuel < FUEL_MIN);
-    this->systemIo->setContactLight(isDown);
+    this->systemIo->setContactLight(this->altitude <= ALTITUDE_LIGHT_MIN);
     this->systemIo->setMasterAlarm(isOverun);
+
+    double width = (double)(this->systemIo->getTFT()->width()) / 2.0;
+    double height = (double)(this->systemIo->getTFT()->height()) / 2.0;
+    double xLine = width + (max(-1, min(1, this->deltaX / MAX_VELOCITY_X)) * width);
+    double yLine = height + (max(-1, min(1, this->deltaY / MAX_VELOCITY_Y)) * height);
+    this->systemIo->getTFT()->fillScreen(ST77XX_WHITE);
+    this->systemIo->getTFT()->drawLine((int16_t)xLine, 0, (int16_t)xLine, this->systemIo->getTFT()->height(), ST77XX_BLACK);
+    this->systemIo->getTFT()->drawLine(0, (int16_t)yLine, this->systemIo->getTFT()->width(), (int16_t)yLine, ST77XX_BLACK);
 
     if (start > 0 && isDown) {
         start = 0;
         if (!isOverun) {
             this->systemIo->playTrack(TRACK_EAGLE_LANDED);
         }
-    } else if (start == 0 && this->systemIo->getMasterAlarm()) {
+    }
+    
+    if (this->systemIo->getMasterAlarm()) {
         this->reset();
     }
 }

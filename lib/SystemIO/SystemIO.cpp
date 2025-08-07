@@ -1,4 +1,5 @@
 #include <SystemIO.h>
+#include <Wire.h>
 
 #define PRINT_OUTPUT
 
@@ -16,9 +17,9 @@ bool SystemIO::init() {
   }
 
   int inputs[3] = {
-    INPUT_MODE_PIN,git@github.com:johnjones4/Spaceship-Control-Panel.git
+    INPUT_MODE_PIN,
     INPUT_ENGINE_ARM,
-    INPUT_O2_STIR,git@github.com:johnjones4/Spaceship-Control-Panel.git
+    INPUT_O2_STIR,
   };
   for (int i = 0; i < 3; i++) {
     this->mcps[MCP_INDEX_INPUT]->pinMode(inputs[i], INPUT_PULLUP);
@@ -66,7 +67,7 @@ bool SystemIO::init() {
   this->fuel->setBrightness(0xff);
   this->fuel->clear();
 
-  return true;git@github.com:johnjones4/Spaceship-Control-Panel.git
+  return true;
 }
 
 void SystemIO::reset() {

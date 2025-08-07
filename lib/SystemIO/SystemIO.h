@@ -1,7 +1,7 @@
 #ifndef SystemIO_H
 #define SystemIO_H
 
-#include <../include/types.h>
+#include <../../include/types.h>
 #include <Adafruit_MCP23X17.h>
 #include <TM1637Display.h>
 #include <Adafruit_GFX.h>

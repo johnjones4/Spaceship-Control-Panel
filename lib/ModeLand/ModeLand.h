@@ -2,7 +2,7 @@
 #define ModeLand_H
 
 #include <Mode.h>
-#include <../include/types.h>
+#include <../../include/types.h>
 
 #define DELTA_X_INITIAL 5.0
 #define DELTA_Y_INITIAL 1.0

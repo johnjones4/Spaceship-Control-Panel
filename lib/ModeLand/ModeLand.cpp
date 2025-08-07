@@ -43,13 +43,18 @@ void ModeLand::step() {
             }
 
             double thrustPcnt = pow(this->systemIo->getThrottle(), 2);
-            this->fuel = this->fuel - (thrustPcnt * FUEL_USAGE_RATE) * deltaTime;
+            // this->fuel = this->fuel - (thrustPcnt * FUEL_USAGE_RATE) * deltaTime;
             thrustAccel = (MAX_THRUST * pow(1 - (this->fuel / FUEL_INITIAL), 2)) * thrustPcnt;
         }
         double netAccel = thrustAccel + GRAVITY;
         this->deltaZ = this->deltaZ + netAccel * deltaTime;
         this->altitude = this->altitude + (this->deltaZ * deltaTime);
         this->lastStep = now;
+
+        Serial.print("Delta X");
+        Serial.println(deltaX);
+        Serial.print("Delta Y");
+        Serial.println(deltaY);
     }
 
     bool isDown = this->altitude <= ALTITUDE_MIN;
@@ -65,7 +70,7 @@ void ModeLand::step() {
     double height = (double)(this->systemIo->getTFT()->height()) / 2.0;
     double xLine = width + (max(-1, min(1, this->deltaX / MAX_VELOCITY_X)) * width);
     double yLine = height + (max(-1, min(1, this->deltaY / MAX_VELOCITY_Y)) * height);
-    this->systemIo->getTFT()->fillScreen(ST77XX_WHITE);
+    // this->systemIo->getTFT()->fillScreen(ST77XX_WHITE);
     this->systemIo->getTFT()->drawLine((int16_t)xLine, 0, (int16_t)xLine, this->systemIo->getTFT()->height(), ST77XX_BLACK);
     this->systemIo->getTFT()->drawLine(0, (int16_t)yLine, this->systemIo->getTFT()->width(), (int16_t)yLine, ST77XX_BLACK);
 

@@ -1,7 +1,7 @@
 #include <SystemIO.h>
 #include <Wire.h>
 
-#define PRINT_OUTPUT
+// #define PRINT_OUTPUT
 
 bool SystemIO::init() {
   this->tft = new Adafruit_ST7735(TFT_CS, TFT_DC, TFT_MOSI, TFT_SCLK, TFT_RST);
@@ -57,7 +57,7 @@ bool SystemIO::init() {
     this->launch,
     this->land,
   };
-  for (int i = 7; i < 7; i++) {
+  for (int i = 0; i < 7; i++) {
     toggles[i]->init();
   }
 
@@ -106,10 +106,10 @@ t_direction SystemIO::getDirection() {
   };
   for (int i = 0; i < 4; i++) {
     if (inputs[i]->read()) {
-      Serial.println("joystick");
       return directions[i];
     }
   }
+  return Neutral;
 }
 
 double SystemIO::getThrottle() {

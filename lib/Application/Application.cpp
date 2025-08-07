@@ -4,6 +4,8 @@
 
 void Application::init() {
   Serial.begin(9600);
+  delay(5000);
+  Serial.println("starting");
 
   this->systemIO = new SystemIO();
   if (!this->systemIO->init()) {

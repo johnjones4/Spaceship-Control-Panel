@@ -9,7 +9,7 @@
 #include <SPI.h>
 #include <ButtonSwitch.h>
 
-#define N_MCPs 3
+#define N_MCPs 2
 
 #define MCP_INDEX_INPUT   0
 #define MCP_INDEX_OUTPUT  1
@@ -38,9 +38,11 @@
 
 #define DISPLAY_CLK_ALT   18
 #define DISPLAY_DIO_ALT   19
-#define DISPLAY_CLK_FUEL  20
-#define DISPLAY_DIO_FUEL  21
+#define DISPLAY_CLK_FUEL  14
+#define DISPLAY_DIO_FUEL  15
 
+#define TFT_SCLK 2   // set these to be whatever pins you like!
+#define TFT_MOSI 3   // set these to be whatever pins you like!
 #define TFT_CS        10
 #define TFT_RST        12 // Or set to -1 and connect to Arduino RESET pin
 #define TFT_DC         11

@@ -4,10 +4,11 @@
 #define PRINT_OUTPUT
 
 bool SystemIO::init() {
-  this->tft = new Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
+  this->tft = new Adafruit_ST7735(TFT_CS, TFT_DC, TFT_MOSI, TFT_SCLK, TFT_RST);
   this->tft->initR(INITR_BLACKTAB);
 
   for (int i = 0; i < N_MCPs; i++) {
+    Serial.println("Initializing MCP");
     this->mcps[i] = new Adafruit_MCP23X17();
     if (!this->mcps[i]->begin_I2C(MCP23XXX_ADDR + i)) {
       Serial.print("Failed to start MCP:");
@@ -72,13 +73,15 @@ bool SystemIO::init() {
 
 void SystemIO::reset() {
   this->setAltitude(9999);
-  this->setFuelLight(9999);
+  this->setFuel(9999);
+  this->setFuelLight(true);
   this->setMasterAlarm(true);
   this->setContactLight(true);
   this->tft->fillScreen(ST77XX_BLACK);
   delay(1000);
   this->setAltitude(0);
-  this->setFuelLight(0);
+  this->setFuel(0);
+  this->setFuelLight(false);
   this->setMasterAlarm(false);
   this->setContactLight(false);
   this->tft->fillScreen(ST77XX_WHITE);
@@ -103,6 +106,7 @@ t_direction SystemIO::getDirection() {
   };
   for (int i = 0; i < 4; i++) {
     if (inputs[i]->read()) {
+      Serial.println("joystick");
       return directions[i];
     }
   }

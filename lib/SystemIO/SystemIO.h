@@ -36,14 +36,14 @@
 #define OUTPUT_ENGINE_LIGHT_4 6
 #define OUTPUT_ENGINE_LIGHT_5 7
 
-#define DISPLAY_CLK_ALT   24
-#define DISPLAY_DIO_ALT   25
-#define DISPLAY_CLK_FUEL  26
-#define DISPLAY_DIO_FUEL  27
+#define DISPLAY_CLK_ALT   18
+#define DISPLAY_DIO_ALT   19
+#define DISPLAY_CLK_FUEL  20
+#define DISPLAY_DIO_FUEL  21
 
 #define TFT_CS        10
-#define TFT_RST        9 // Or set to -1 and connect to Arduino RESET pin
-#define TFT_DC         8
+#define TFT_RST        12 // Or set to -1 and connect to Arduino RESET pin
+#define TFT_DC         11
 
 class SystemIO {
 public:

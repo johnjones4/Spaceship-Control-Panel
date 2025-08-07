@@ -16,9 +16,9 @@ bool SystemIO::init() {
   }
 
   int inputs[3] = {
-    INPUT_MODE_PIN,
+    INPUT_MODE_PIN,git@github.com:johnjones4/Spaceship-Control-Panel.git
     INPUT_ENGINE_ARM,
-    INPUT_O2_STIR,
+    INPUT_O2_STIR,git@github.com:johnjones4/Spaceship-Control-Panel.git
   };
   for (int i = 0; i < 3; i++) {
     this->mcps[MCP_INDEX_INPUT]->pinMode(inputs[i], INPUT_PULLUP);
@@ -66,7 +66,7 @@ bool SystemIO::init() {
   this->fuel->setBrightness(0xff);
   this->fuel->clear();
 
-  return true;
+  return true;git@github.com:johnjones4/Spaceship-Control-Panel.git
 }
 
 void SystemIO::reset() {
@@ -108,7 +108,8 @@ t_direction SystemIO::getDirection() {
 }
 
 double SystemIO::getThrottle() {
-  return (double)analogRead(ANALOG_INPUT_THROTTLE) / 4096.0;
+  return 0.5;
+  // return (double)analogRead(ANALOG_INPUT_THROTTLE) / 4096.0;
 }
 
 bool SystemIO::getMasterAlarm() {

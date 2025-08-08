@@ -113,8 +113,7 @@ t_direction SystemIO::getDirection() {
 }
 
 double SystemIO::getThrottle() {
-  return 0.5;
-  // return (double)analogRead(ANALOG_INPUT_THROTTLE) / 4096.0;
+  return (double)analogRead(ANALOG_INPUT_THROTTLE) / 1024.0;
 }
 
 bool SystemIO::getMasterAlarm() {

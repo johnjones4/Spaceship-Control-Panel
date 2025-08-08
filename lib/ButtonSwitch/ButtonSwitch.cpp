@@ -18,7 +18,7 @@ void ButtonSwitch::init() {
 #endif
 }
 
-bool ButtonSwitch::read(bool withDebunce = true) {
+bool ButtonSwitch::read(bool withDebunce) {
 #ifdef PRINT_INPUT
   Serial.print("MCP Input ");
   Serial.print(pin);

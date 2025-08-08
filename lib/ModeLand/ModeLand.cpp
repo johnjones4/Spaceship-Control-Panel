@@ -19,7 +19,7 @@ void ModeLand::reset() {
 
 void ModeLand::step() {
     if (start > 0) {
-        long now = millis();
+        unsigned long now = millis();
         double deltaTime = ((double)(now - this->lastStep) / 1000);
         double thrustAccel = 0;
         if (this->fuel > 0) {

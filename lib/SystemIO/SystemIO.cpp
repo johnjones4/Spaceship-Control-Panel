@@ -4,6 +4,16 @@
 // #define PRINT_OUTPUT
 
 bool SystemIO::init() {
+  this->sfxSerial = new UART(SFX_TX, SFX_RX);
+  this->sfxSerial->begin(9600);
+  this->sfx = new Adafruit_Soundboard(this->sfxSerial, NULL, SFX_RST);
+  if (!this->sfx->reset()) {
+    Serial.println("Sound board not found!");
+    return false;
+  } else {
+    Serial.println("Sound board found");
+  }
+
   this->tft = new Adafruit_ST7735(TFT_CS, TFT_DC, TFT_MOSI, TFT_SCLK, TFT_RST);
   this->tft->initR(INITR_BLACKTAB);
 
@@ -201,11 +211,12 @@ void SystemIO::setEngineLights(bool *b) {
   }
 }
 
-void SystemIO::playTrack(int track) {
+void SystemIO::playTrack(uint8_t track) {
 #ifdef PRINT_OUTPUT
   Serial.print("Playing track: ");
   Serial.println(track);
 #endif
+  this->sfx->playTrack((uint8_t)track);
 }
 
 Adafruit_ST7735* SystemIO::getTFT() {

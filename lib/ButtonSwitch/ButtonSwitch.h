@@ -14,8 +14,8 @@ public:
 private:
   Adafruit_MCP23X17* mcp;
   int pin;
-  long debounce;
-  long lastPress = 0;
+  unsigned long debounce;
+  unsigned long lastPress = 0;
 };
 
 #endif

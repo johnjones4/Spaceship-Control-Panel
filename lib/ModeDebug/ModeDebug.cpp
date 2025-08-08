@@ -11,5 +11,5 @@ void ModeDebug::reset() {
 void ModeDebug::step() {
   Serial.println("beep");
   delay(1000);
-  Serial.println(this->systemIo->getThrottle());
+  this->systemIo->playTrack(00);
 }

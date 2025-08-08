@@ -8,6 +8,8 @@
 #include <Adafruit_ST7735.h>
 #include <SPI.h>
 #include <ButtonSwitch.h>
+#include <Adafruit_Soundboard.h>
+#include <HardwareSerial.h>
 
 #define N_MCPs 2
 
@@ -58,6 +60,10 @@
 #define TFT_RST   12
 #define TFT_DC    11
 
+#define SFX_TX  8
+#define SFX_RX  9
+#define SFX_RST 7
+
 class SystemIO {
 public:
   bool init();
@@ -80,11 +86,13 @@ public:
   void setContactLight(bool b);
   void setEngineLights(bool *b);
 
-  void playTrack(int track);
+  void playTrack(uint8_t track);
 
   Adafruit_ST7735* getTFT();
 private:
   Adafruit_MCP23X17* mcps[N_MCPs];
+  Adafruit_Soundboard *sfx;
+  HardwareSerial* sfxSerial;
   TM1637Display* altitude;
   TM1637Display* fuel;
   Adafruit_ST7735* tft;

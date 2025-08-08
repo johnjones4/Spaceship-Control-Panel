@@ -32,8 +32,8 @@ private:
   double thrust;
   double altitude;
   double fuel;
-  long start;
-  long lastStep;
+  unsigned long start;
+  unsigned long lastStep;
 };
 
 #endif

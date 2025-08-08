@@ -10,7 +10,7 @@ class ButtonSwitch {
 public:
   ButtonSwitch(Adafruit_MCP23X17* mcp, int pin, long debounce);
   void init();
-  bool read();
+  bool read(bool withDebunce = true);
 private:
   Adafruit_MCP23X17* mcp;
   int pin;

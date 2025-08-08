@@ -17,17 +17,19 @@ bool SystemIO::init() {
     }
   }
 
-  int inputs[3] = {
-    INPUT_MODE_PIN,
+  int inputs[5] = {
+    INPUT_MODE_FREE,
+    INPUT_MODE_LAND,
+    INPUT_MODE_DOCK,
     INPUT_ENGINE_ARM,
     INPUT_O2_STIR,
   };
-  for (int i = 0; i < 3; i++) {
+  for (int i = 0; i < 5; i++) {
     this->mcps[MCP_INDEX_INPUT]->pinMode(inputs[i], INPUT_PULLUP);
   }
   pinMode(ANALOG_INPUT_THROTTLE, INPUT);
 
-  int outputs[8] = {
+  int outputs[12] = {
     OUTPUT_FUEL_LIGHT,
     OUTPUT_MASTER_ALARM,
     OUTPUT_CONTACT_LIGHT,
@@ -36,8 +38,12 @@ bool SystemIO::init() {
     OUTPUT_ENGINE_LIGHT_3,
     OUTPUT_ENGINE_LIGHT_4,
     OUTPUT_ENGINE_LIGHT_5,
+    OUTPUT_THRUSTER_N,
+    OUTPUT_THRUSTER_S,
+    OUTPUT_THRUSTER_E,
+    OUTPUT_THRUSTER_W
   };
-  for (int i = 0; i < 8; i++) {
+  for (int i = 0; i < 12; i++) {
     this->mcps[MCP_INDEX_OUTPUT]->pinMode(outputs[i], OUTPUT);
   }
 
@@ -205,4 +211,22 @@ void SystemIO::playTrack(int track) {
 
 Adafruit_ST7735* SystemIO::getTFT() {
   return this->tft;
+}
+
+void SystemIO::step() {
+  ButtonSwitch *inputs[4] = {
+    this->directionN,
+    this->directionS,
+    this->directionE,
+    this->directionW,
+  };
+  int outputs[4] = {
+    OUTPUT_THRUSTER_N,
+    OUTPUT_THRUSTER_S,
+    OUTPUT_THRUSTER_E,
+    OUTPUT_THRUSTER_W
+  };
+  for (int i = 0; i < 4; i++) {
+    this->mcps[MCP_INDEX_OUTPUT]->digitalWrite(outputs[i], inputs[i]->read(false));
+  }
 }

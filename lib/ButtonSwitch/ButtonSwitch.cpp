@@ -18,14 +18,16 @@ void ButtonSwitch::init() {
 #endif
 }
 
-bool ButtonSwitch::read() {
+bool ButtonSwitch::read(bool withDebunce = true) {
 #ifdef PRINT_INPUT
   Serial.print("MCP Input ");
   Serial.print(pin);
   Serial.print(" ");
   Serial.println(this->mcp->digitalRead(this->pin) == LOW);
 #endif
-  if (this->mcp->digitalRead(this->pin) == LOW && millis() - this->lastPress >= this->debounce) {
+  if (!withDebunce) {
+    return this->mcp->digitalRead(this->pin) == LOW;
+  } else if (this->mcp->digitalRead(this->pin) == LOW && millis() - this->lastPress >= this->debounce) {
     this->lastPress = millis();
     return true;
   }

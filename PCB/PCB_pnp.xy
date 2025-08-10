@@ -1,0 +1,39 @@
+# Pick And Place List
+# Company=
+# Author=
+# eMail=
+#
+# Project=PCB
+# Date=18:22:24
+# CreatedBy=Fritzing 1.0.2b.2023-12-20.CD-1901-0-dbdbe34c
+#
+#
+# Coordinates in mils, always center of component
+# Origin 0/0=Lower left corner of PCB
+# Rotation in degree (0-360, math. pos.)
+#
+RefDes,Description,Package,X,Y,Rotation,Side,Mount
+Description: resistance;capacitance;inductance;voltage;current;power;mpn;mn;
+Mod1,";;;;;;;;","",2460.11,2774.99,0,Top,MANUAL
+Mode,";;;;;;;;","molex-1x4_lock",5660.24,1107.74,0,Top,SMT
+Thrusters,";;;;;;;;","molex-1x6-ra",5660.24,2725.49,0,Top,SMT
+Throttle,";;;;;;;;","molex-1x4_lock",3360.24,2917.74,0,Top,SMT
+Fuel,";;;;;;;;","molex-1x4_lock",1260.24,1517.74,0,Top,SMT
+Rumbler,";;;;;;;;","molex-1x2_lock",1320.24,2357.74,90,Top,SMT
+Status Lights,";;;;;;;;","molex-1x4_lock",5660.24,3497.74,0,Top,SMT
+Display,";;;;;;;;","molex-1x6-ra",1460.24,3335.49,0,Top,SMT
+Power,";;;;;;;;","molex-1x2_lock",3520.24,3957.74,90,Top,SMT
+IC1,";;;;;;;;","",4460.24,752.74,0,Top,MANUAL
+Joystick,";;;;;;;;","molex-1x6-ra",5660.24,725.49,0,Top,SMT
+Buttons,";;;;;;;;","molex-1x6-ra",1860.24,1335.49,0,Top,SMT
+Toggles,";;;;;;;;","molex-1x6-ra",2660.24,1335.49,0,Top,SMT
+Engine Lights,";;;;;;;;","molex-1x6-ra",5660.24,3125.49,0,Top,SMT
+Part2,";;;;;;;;","",610.235,1457.74,0,Top,MANUAL
+Display Power,";;;;;;;;","molex-1x2_lock",4720.24,3557.74,90,Top,SMT
+IC2,";;;;;;;;","",4460.24,2352.74,0,Top,MANUAL
+Speaker,";;;;;;;;","molex-1x2_lock",1320.24,1957.74,90,Top,SMT
+Aux,";;;;;;;;","molex-1x4_lock",4360.24,1917.74,0,Top,SMT
+Part1,";;;;;;;;","",610.235,2849.19,90,Top,MANUAL
+Alt,";;;;;;;;","molex-1x4_lock",3360.24,2417.74,0,Top,SMT
+Master Alarm,";;;;;;;;","molex-1x4_lock",5660.24,2017.74,0,Top,SMT
+R1,"68;;;;;0W;;;","THT",5110.24,3502.74,0,Top,THT

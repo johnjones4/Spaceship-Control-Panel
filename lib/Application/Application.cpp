@@ -3,7 +3,7 @@
 #include <ModeLand.h>
 #include <ModeDebug.h>
 
-// #define DEBUG_MODE
+#define DEBUG_MODE
 
 void Application::init() {
   Serial.begin(9600);

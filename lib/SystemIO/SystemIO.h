@@ -57,8 +57,8 @@
 #define TFT_SCLK  2
 #define TFT_MOSI  3
 #define TFT_CS    10
-#define TFT_RST   12
-#define TFT_DC    11
+#define TFT_RST   11
+#define TFT_DC    12
 
 #define SFX_TX  8
 #define SFX_RX  9

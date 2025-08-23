@@ -7,7 +7,7 @@
 #define DELTA_X_INITIAL 5.0
 #define DELTA_Y_INITIAL 1.0
 #define THRUST_INITIAL 0.0
-#define MAX_THRUST 4.0
+#define MAX_THRUST 3.0
 #define DIRECTION_DELTA_DELTA 0.5
 #define MIN_ABS_DELTA 0.1
 #define GRAVITY -1.62
@@ -15,7 +15,7 @@
 #define ALTITUDE_MIN 1.0
 #define ALTITUDE_LIGHT_MIN 3.0
 #define FUEL_INITIAL 1000.0
-#define FUEL_USAGE_RATE -.01
+#define FUEL_USAGE_RATE -1
 #define FUEL_MIN 100
 #define MAX_VELOCITY_X 10.0
 #define MAX_VELOCITY_Y 10.0
@@ -34,6 +34,8 @@ private:
   double fuel;
   unsigned long start;
   unsigned long lastStep;
+  int16_t lastXLine = -1;
+  int16_t lastYLine = -1;
 };
 
 #endif

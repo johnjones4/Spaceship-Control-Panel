@@ -42,19 +42,15 @@ void ModeLand::step() {
                 break;
             }
 
-            double thrustPcnt = pow(this->systemIo->getThrottle(), 2);
-            // this->fuel = this->fuel - (thrustPcnt * FUEL_USAGE_RATE) * deltaTime;
-            thrustAccel = (MAX_THRUST * pow(1 - (this->fuel / FUEL_INITIAL), 2)) * thrustPcnt;
+            double thrustPcnt = this->systemIo->getThrottle();
+            this->fuel = this->fuel + ((thrustPcnt * FUEL_USAGE_RATE) * deltaTime);
+            thrustAccel = MAX_THRUST * thrustPcnt;
+            // thrustAccel = MAX_THRUST * pow(1 - (this->fuel / FUEL_INITIAL), 2)) * thrustPcnt * -1;
         }
         double netAccel = thrustAccel + GRAVITY;
         this->deltaZ = this->deltaZ + netAccel * deltaTime;
         this->altitude = this->altitude + (this->deltaZ * deltaTime);
         this->lastStep = now;
-
-        Serial.print("Delta X");
-        Serial.println(deltaX);
-        Serial.print("Delta Y");
-        Serial.println(deltaY);
     }
 
     bool isDown = this->altitude <= ALTITUDE_MIN;
@@ -68,11 +64,24 @@ void ModeLand::step() {
 
     double width = (double)(this->systemIo->getTFT()->width()) / 2.0;
     double height = (double)(this->systemIo->getTFT()->height()) / 2.0;
-    double xLine = width + (max(-1, min(1, this->deltaX / MAX_VELOCITY_X)) * width);
-    double yLine = height + (max(-1, min(1, this->deltaY / MAX_VELOCITY_Y)) * height);
-    // this->systemIo->getTFT()->fillScreen(ST77XX_WHITE);
-    this->systemIo->getTFT()->drawLine((int16_t)xLine, 0, (int16_t)xLine, this->systemIo->getTFT()->height(), ST77XX_BLACK);
-    this->systemIo->getTFT()->drawLine(0, (int16_t)yLine, this->systemIo->getTFT()->width(), (int16_t)yLine, ST77XX_BLACK);
+    double xLine = (int16_t)(width - (max(-1, min(1, this->deltaY / MAX_VELOCITY_X)) * width));
+    double yLine = (int16_t)(height - (max(-1, min(1, this->deltaX / MAX_VELOCITY_Y)) * height));
+    
+    bool drawLine = true;
+    if (this->lastXLine > 0 && this->lastYLine > 0) {        
+        if (this->lastXLine != xLine || this->lastYLine != yLine) {
+            this->systemIo->getTFT()->drawLine((int16_t)lastXLine, 0, (int16_t)lastXLine, this->systemIo->getTFT()->height(), ST77XX_WHITE);
+            this->systemIo->getTFT()->drawLine(0, (int16_t)lastYLine, this->systemIo->getTFT()->width(), (int16_t)lastYLine, ST77XX_WHITE);    
+        } else {
+            drawLine = false;
+        }
+    }
+    if (drawLine) {
+        this->lastXLine = xLine;
+        this->lastYLine = yLine;
+        this->systemIo->getTFT()->drawLine((int16_t)xLine, 0, (int16_t)xLine, this->systemIo->getTFT()->height(), ST77XX_BLACK);
+        this->systemIo->getTFT()->drawLine(0, (int16_t)yLine, this->systemIo->getTFT()->width(), (int16_t)yLine, ST77XX_BLACK);
+    }
 
     if (start > 0 && isDown) {
         start = 0;

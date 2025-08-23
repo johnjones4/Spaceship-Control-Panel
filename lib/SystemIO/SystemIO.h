@@ -24,14 +24,14 @@
 #define INPUT_DIRECTION_E     5
 #define INPUT_DIRECTION_W     6
 #define INPUT_MASTER_ALARM    7
-#define INPUT_ENGINE_ARM      8
-#define INPUT_O2_STIR         9
-#define INPUT_RETRACT         10
-#define INPUT_UNUSED_TOGGLE_1 11
+#define INPUT_O2_STIR         8
+#define INPUT_ENGINE_ARM      9
+#define INPUT_TOWER_JET       10
+#define INPUT_MAIN_CHUTE      11
 #define INPUT_LAUNCH          12
 #define INPUT_LAND            13
-#define INPUT_UNUSED_BUTTON_1 14
-#define INPUT_UNUSED_BUTTON_2 15
+#define INPUT_RETRACT         14
+#define INPUT_RESET           15
 
 #define ANALOG_INPUT_THROTTLE 26
 

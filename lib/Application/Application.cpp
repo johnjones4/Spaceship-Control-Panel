@@ -12,6 +12,8 @@ void Application::init() {
 #endif
   Serial.println("starting");
 
+  randomSeed(analogRead(0));
+
   this->systemIO = new SystemIO();
   if (!this->systemIO->init()) {
     Serial.println("Error starting system IO");

@@ -9,7 +9,7 @@
 #define THRUST_INITIAL 0.0
 #define MAX_THRUST 3.0
 #define DIRECTION_DELTA_DELTA 0.5
-#define MIN_ABS_DELTA 0.1
+#define MIN_ABS_DELTA 0.5
 #define GRAVITY -1.62
 #define ALTITUDE_INITIAL 9000.0
 #define ALTITUDE_MIN 1.0
@@ -19,6 +19,7 @@
 #define FUEL_MIN 100
 #define MAX_VELOCITY_X 10.0
 #define MAX_VELOCITY_Y 10.0
+#define RANDOM_VELOCITY_CHANGE_MAX 1
 
 class ModeLand : public Mode {
 public:
@@ -36,6 +37,8 @@ private:
   unsigned long lastStep;
   int16_t lastXLine = -1;
   int16_t lastYLine = -1;
+
+  int16_t cartesienPlotCoord(double max, double value, int16_t length);
 };
 
 #endif

@@ -17,8 +17,8 @@
 #define MCP_INDEX_OUTPUT  1
 
 #define INPUT_MODE_FREE       0
-#define INPUT_MODE_LAND       1
-#define INPUT_MODE_DOCK       2
+#define INPUT_MODE_DOCK       1
+#define INPUT_MODE_LAND       2
 #define INPUT_DIRECTION_N     3
 #define INPUT_DIRECTION_S     4
 #define INPUT_DIRECTION_E     5

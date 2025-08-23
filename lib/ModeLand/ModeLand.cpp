@@ -49,7 +49,7 @@ void ModeLand::step() {
 
             double thrustPcnt = this->systemIo->getThrottle();
             this->fuel = this->fuel + ((thrustPcnt * FUEL_USAGE_RATE) * deltaTime);
-            thrustPcnt = pow(1 - (this->fuel / FUEL_INITIAL), 2) * thrustPcnt;
+            // thrustPcnt = pow(1 - (this->fuel / FUEL_INITIAL), 2) * thrustPcnt;
             thrustAccel = MAX_THRUST * thrustPcnt;
         }
         double netAccel = thrustAccel + GRAVITY;
@@ -84,11 +84,10 @@ void ModeLand::step() {
         this->lastYLine = yLine;
         this->systemIo->getTFT()->drawLine((int16_t)xLine, 0, (int16_t)xLine, this->systemIo->getTFT()->height(), ST77XX_BLACK);
         this->systemIo->getTFT()->drawLine(0, (int16_t)yLine, this->systemIo->getTFT()->width(), (int16_t)yLine, ST77XX_BLACK);
-        double x1 = cartesienPlotCoord(MAX_VELOCITY_X, MIN_ABS_DELTA * -1, this->systemIo->getTFT()->height());
-        double x2 = cartesienPlotCoord(MAX_VELOCITY_X, MIN_ABS_DELTA, this->systemIo->getTFT()->height());
-        double y1 = cartesienPlotCoord(MAX_VELOCITY_Y, MIN_ABS_DELTA * -1, this->systemIo->getTFT()->width());
-        double y2 = cartesienPlotCoord(MAX_VELOCITY_Y, MIN_ABS_DELTA, this->systemIo->getTFT()->width());
-        this->systemIo->getTFT()->drawRect(x1, y1, x2 - x1, y2 - x1, ST77XX_BLACK);
+        double x = cartesienPlotCoord(MAX_VELOCITY_Y, 0, this->systemIo->getTFT()->width());
+        double y = cartesienPlotCoord(MAX_VELOCITY_X, 0, this->systemIo->getTFT()->height());
+        double r = (MIN_ABS_DELTA / MAX_VELOCITY_X) * (double)(this->systemIo->getTFT()->height() / 2);
+        this->systemIo->getTFT()->drawCircle(x, y, r, ST77XX_BLACK);
     }
 
     if (start > 0 && isDown) {

@@ -27,14 +27,16 @@ bool SystemIO::init() {
     }
   }
 
-  int inputs[5] = {
+  int inputs[7] = {
     INPUT_MODE_FREE,
     INPUT_MODE_LAND,
     INPUT_MODE_DOCK,
     INPUT_ENGINE_ARM,
     INPUT_O2_STIR,
+    INPUT_TOWER_JET,
+    INPUT_MAIN_CHUTE,
   };
-  for (int i = 0; i < 5; i++) {
+  for (int i = 0; i < 7; i++) {
     this->mcps[MCP_INDEX_INPUT]->pinMode(inputs[i], INPUT_PULLUP);
   }
   pinMode(ANALOG_INPUT_THROTTLE, INPUT);
@@ -64,7 +66,9 @@ bool SystemIO::init() {
   this->masterAlarm = new ButtonSwitch(this->mcps[MCP_INDEX_INPUT], INPUT_MASTER_ALARM, DEBOUNCE_SHORT);
   this->launch = new ButtonSwitch(this->mcps[MCP_INDEX_INPUT], INPUT_LAUNCH, DEBOUNCE_SHORT);
   this->land = new ButtonSwitch(this->mcps[MCP_INDEX_INPUT], INPUT_LAND, DEBOUNCE_SHORT);
-  ButtonSwitch* toggles[7] = {
+  this->retract = new ButtonSwitch(this->mcps[MCP_INDEX_INPUT], INPUT_RETRACT, DEBOUNCE_SHORT);
+  this->resetb = new ButtonSwitch(this->mcps[MCP_INDEX_INPUT], INPUT_RESET, DEBOUNCE_SHORT);
+  ButtonSwitch* toggles[9] = {
     this->directionN,
     this->directionS,
     this->directionE,
@@ -72,6 +76,8 @@ bool SystemIO::init() {
     this->masterAlarm,
     this->launch,
     this->land,
+    this->retract,
+    this->resetb,
   };
   for (int i = 0; i < 7; i++) {
     toggles[i]->init();
@@ -84,6 +90,10 @@ bool SystemIO::init() {
   this->fuel->setBrightness(0xff);
   this->fuel->clear();
 
+  this->masterAlarmState = false;
+  uint8_t b[5] = {0,0,0,0,0};
+  this->setEngineLights(b);
+
   return true;
 }
 
@@ -93,6 +103,8 @@ void SystemIO::reset() {
   this->setFuelLight(true);
   this->setMasterAlarm(true);
   this->setContactLight(true);
+  uint8_t b[5] = {1,1,2,1,1};
+  this->setEngineLights(b);
   this->tft->fillScreen(ST77XX_BLACK);
   delay(1000);
   this->setAltitude(0);
@@ -100,11 +112,19 @@ void SystemIO::reset() {
   this->setFuelLight(false);
   this->setMasterAlarm(false);
   this->setContactLight(false);
+  uint8_t b1[5] = {0,0,0,0,0};
+  this->setEngineLights(b1);
   this->tft->fillScreen(ST77XX_WHITE);
 }
   
 t_mode SystemIO::getModeSelection() {
-  return Land; //TODO
+  if (this->mcps[MCP_INDEX_INPUT]->digitalRead(INPUT_MODE_DOCK) == LOW) {
+    return Dock;
+  } else if (this->mcps[MCP_INDEX_INPUT]->digitalRead(INPUT_MODE_LAND) == LOW) {
+    return Land;
+  } else {
+    return Freeplay;
+  }
 }
 
 t_direction SystemIO::getDirection() {
@@ -152,6 +172,22 @@ bool SystemIO::getLand() {
   return this->land->read();
 }
 
+bool SystemIO::getRetract() {
+  return this->retract->read();
+}
+
+bool SystemIO::getReset() {
+  return this->resetb->read();
+}
+
+bool SystemIO::getTowerJet() {
+  return this->mcps[MCP_INDEX_INPUT]->digitalRead(INPUT_TOWER_JET) == LOW;
+}
+
+bool SystemIO::getMainChute() {
+  return this->mcps[MCP_INDEX_INPUT]->digitalRead(INPUT_MAIN_CHUTE) == LOW;
+}
+
 void SystemIO::setAltitude(int v) {
 #ifdef PRINT_OUTPUT
   Serial.print("Altitude: ");
@@ -181,7 +217,7 @@ void SystemIO::setMasterAlarm(bool b) {
   Serial.print("Master Alarm: ");
   Serial.println(b);
 #endif
-  this->mcps[MCP_INDEX_OUTPUT]->digitalWrite(OUTPUT_MASTER_ALARM, b ? HIGH : LOW);
+  this->masterAlarmState = b;
 }
 
 void SystemIO::setContactLight(bool b) {
@@ -192,22 +228,18 @@ void SystemIO::setContactLight(bool b) {
   this->mcps[MCP_INDEX_OUTPUT]->digitalWrite(OUTPUT_CONTACT_LIGHT, b ? HIGH : LOW);
 }
 
-void SystemIO::setEngineLights(bool *b) {
-  int pins[5] = {
-    OUTPUT_ENGINE_LIGHT_1,
-    OUTPUT_ENGINE_LIGHT_2,
-    OUTPUT_ENGINE_LIGHT_3,
-    OUTPUT_ENGINE_LIGHT_4,
-    OUTPUT_ENGINE_LIGHT_5
-  };
+void SystemIO::setEngineLights(uint8_t *b) {
+  if (this->engineLightsStatus == NULL) {
+    this->engineLightsStatus = (uint8_t*)malloc(sizeof(uint8_t) * 5);
+  }
+  memcpy(this->engineLightsStatus, b, 5 * sizeof(uint8_t));
   for (int i = 0; i < 5; i++) {
 #ifdef PRINT_OUTPUT
-    Serial.print("Contact Light: ");
+    Serial.print("Engine Light: ");
     Serial.print(i);
     Serial.print(" ");
     Serial.println(b[i]);
 #endif
-    this->mcps[MCP_INDEX_OUTPUT]->digitalWrite(pins[i], b[i] ? HIGH : LOW);
   }
 }
 
@@ -223,7 +255,9 @@ Adafruit_ST7735* SystemIO::getTFT() {
   return this->tft;
 }
 
-void SystemIO::step() {
+void SystemIO::step() {\
+  unsigned long now = millis();
+  bool blinkOn = (now / 1000) % 2 == 0;
   ButtonSwitch *inputs[4] = {
     this->directionN,
     this->directionS,
@@ -238,5 +272,20 @@ void SystemIO::step() {
   };
   for (int i = 0; i < 4; i++) {
     this->mcps[MCP_INDEX_OUTPUT]->digitalWrite(outputs[i], inputs[i]->read(false));
+  }
+
+  this->mcps[MCP_INDEX_OUTPUT]->digitalWrite(OUTPUT_MASTER_ALARM, this->masterAlarmState && blinkOn ? HIGH : LOW);
+
+  if (this->engineLightsStatus != NULL) {
+    int pins[5] = {
+      OUTPUT_ENGINE_LIGHT_1,
+      OUTPUT_ENGINE_LIGHT_2,
+      OUTPUT_ENGINE_LIGHT_3,
+      OUTPUT_ENGINE_LIGHT_4,
+      OUTPUT_ENGINE_LIGHT_5
+    };
+    for (int i = 0; i < 5; i++) {
+      this->mcps[MCP_INDEX_OUTPUT]->digitalWrite(pins[i], this->engineLightsStatus[i] == 1 || (this->engineLightsStatus[i] == 2 && blinkOn) ? HIGH : LOW);
+    }
   }
 }

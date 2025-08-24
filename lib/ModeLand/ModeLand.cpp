@@ -14,7 +14,10 @@ void ModeLand::reset() {
     this->thrust = THRUST_INITIAL;
     this->altitude = ALTITUDE_INITIAL;
     this->fuel = FUEL_INITIAL;
-    this->start = millis();
+    this->playedAthold = false;
+    this->playedLanding = false;
+    this->playedFuel = false;
+    this->start = 0;
 }
 
 void ModeLand::step() {
@@ -49,7 +52,6 @@ void ModeLand::step() {
 
             double thrustPcnt = this->systemIo->getThrottle();
             this->fuel = this->fuel + ((thrustPcnt * FUEL_USAGE_RATE) * deltaTime);
-            // thrustPcnt = pow(1 - (this->fuel / FUEL_INITIAL), 2) * thrustPcnt;
             thrustAccel = MAX_THRUST * thrustPcnt;
         }
         double netAccel = thrustAccel + GRAVITY;
@@ -90,6 +92,16 @@ void ModeLand::step() {
         this->systemIo->getTFT()->drawCircle(x, y, r, ST77XX_BLACK);
     }
 
+    if (this->altitude < CALLOUT_ATHOLD_ALTITUDE && !this->playedAthold) {
+        this->systemIo->playTrack(TRACK_ATHOLD);
+    }
+    if (this->altitude < CALLOUT_LANDING_ALTITUDE && !this->playedLanding) {
+        this->systemIo->playTrack(TRACK_LANDING);
+    }
+    if (this->fuel < FUEL_MIN && !this->playedFuel) {
+        this->systemIo->playTrack(TRACK_60_SECS_FUEL);
+    }
+
     if (start > 0 && isDown) {
         start = 0;
         if (!isOverun) {
@@ -97,8 +109,12 @@ void ModeLand::step() {
         }
     }
     
-    if (this->systemIo->getMasterAlarm()) {
+    if (this->systemIo->getMasterAlarm() || this->systemIo->getReset()) {
         this->reset();
+    }
+
+    if (start == 0 && this->systemIo->getEngineArm()) {
+        start = millis();
     }
 }
 

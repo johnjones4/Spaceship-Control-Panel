@@ -15,11 +15,14 @@
 #define ALTITUDE_MIN 1.0
 #define ALTITUDE_LIGHT_MIN 3.0
 #define FUEL_INITIAL 2000.0
-#define FUEL_USAGE_RATE -10
-#define FUEL_MIN 100
+#define FUEL_USAGE_RATE -50
+#define FUEL_MIN 500
 #define MAX_VELOCITY_X 10.0
 #define MAX_VELOCITY_Y 10.0
 #define RANDOM_VELOCITY_CHANGE_MAX 0.25
+
+#define CALLOUT_ATHOLD_ALTITUDE (ALTITUDE_INITIAL / 2)
+#define CALLOUT_LANDING_ALTITUDE 40
 
 class ModeLand : public Mode {
 public:
@@ -37,6 +40,10 @@ private:
   unsigned long lastStep;
   int16_t lastXLine = -1;
   int16_t lastYLine = -1;
+
+  bool playedAthold;
+  bool playedLanding;
+  bool playedFuel;
 
   int16_t cartesienPlotCoord(double max, double value, int16_t length);
 };

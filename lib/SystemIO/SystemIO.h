@@ -78,13 +78,17 @@ public:
   bool getO2Stir();
   bool getLaunch();
   bool getLand();
+  bool getRetract();
+  bool getReset();
+  bool getTowerJet();
+  bool getMainChute();
 
   void setAltitude(int v);
   void setFuel(int f);
   void setFuelLight(bool b);
   void setMasterAlarm(bool b);
   void setContactLight(bool b);
-  void setEngineLights(bool *b);
+  void setEngineLights(uint8_t *b);
 
   void playTrack(uint8_t track);
 
@@ -103,6 +107,10 @@ private:
   ButtonSwitch *masterAlarm;
   ButtonSwitch *launch;
   ButtonSwitch *land;
+  ButtonSwitch *retract;
+  ButtonSwitch *resetb;
+  bool masterAlarmState;
+  uint8_t* engineLightsStatus = NULL;
 };
 
 #endif

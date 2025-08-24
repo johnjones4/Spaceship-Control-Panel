@@ -46,7 +46,7 @@ void ModeFree::handlePlayingTrack() {
     unsigned long elapsed = millis() - this->lastAudioStart;
     switch (this->trackPlaying)
     {
-    case TRACK_LAUNCH:
+    case TRACK_LAUNCH: {
         uint8_t e[5] = {
             elapsed > TRACK_LAUNCH_ENGINES_START_1 ? 1 : 0,
             elapsed > TRACK_LAUNCH_ENGINES_START_2 ? 1 : 0,
@@ -60,14 +60,15 @@ void ModeFree::handlePlayingTrack() {
         double pcnt = (double)elapsed / (double)TRACK_LAUNCH_END;
         int fuel = TRACK_LAND_FUEL_QUANT - (int)(pcnt * TRACK_LAND_FUEL_QUANT);
         this->systemIo->setFuel(fuel);
-        int fuel = (int)(pcnt * TRACK_LAND_ALT_QUANT);
-        this->systemIo->setAltitude(fuel);
+        int alt = (int)(pcnt * TRACK_LAND_ALT_QUANT);
+        this->systemIo->setAltitude(alt);
 
         if (elapsed > TRACK_LAUNCH_ENGINE_FAILURE && this->systemIo->getMasterAlarm()) {
             this->reset();
         }
         break;
-    case TRACK_LAND:
+    }
+    case TRACK_LAND: {
         uint8_t e[5] = {
             0,
             0,
@@ -82,13 +83,14 @@ void ModeFree::handlePlayingTrack() {
         double pcnt = (double)elapsed / (double)TRACK_LAND_END;
         int fuel = TRACK_LAND_FUEL_QUANT - (int)(pcnt * TRACK_LAND_FUEL_QUANT);
         this->systemIo->setFuel(fuel);
-        int fuel = TRACK_LAND_ALT_QUANT - (int)(pcnt * TRACK_LAND_ALT_QUANT);
-        this->systemIo->setAltitude(fuel);
+        int alt = TRACK_LAND_ALT_QUANT - (int)(pcnt * TRACK_LAND_ALT_QUANT);
+        this->systemIo->setAltitude(alt);
 
         if (elapsed > TRACK_LAND_END) {
             this->reset();
         }
         break;
+    }
     case TRACK_APOLLO13:
         this->systemIo->setMasterAlarm(true);
         if (this->systemIo->getMasterAlarm()) {
@@ -97,10 +99,10 @@ void ModeFree::handlePlayingTrack() {
         break;
     case TRACK_MAIN_CHUTE: {
         double pcnt = (double)elapsed / (double)TRACK_LAND_END;
-        int fuel = TRACK_LAND_ALT_QUANT - (int)(pcnt * TRACK_LAND_ALT_QUANT);
-        this->systemIo->setAltitude(fuel);
+        int alt = TRACK_LAND_ALT_QUANT - (int)(pcnt * TRACK_LAND_ALT_QUANT);
+        this->systemIo->setAltitude(alt);
+        break;
     }
-        
     default:
         break;
     }

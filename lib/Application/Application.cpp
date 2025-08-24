@@ -4,7 +4,7 @@
 #include <ModeDebug.h>
 #include <ModeFree.h>
 
-// #define DEBUG_MODE
+//  #define DEBUG_MODE
 
 void Application::init() {
   Serial.begin(9600);
@@ -42,6 +42,7 @@ void Application::step() {
   }
 #endif
   this->currentMode->step();
+  this->systemIO->step();
 }
 
 Mode* Application::modeFactory(t_mode modeType) {

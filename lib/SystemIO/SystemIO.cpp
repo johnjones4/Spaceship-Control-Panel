@@ -79,7 +79,7 @@ bool SystemIO::init() {
     this->retract,
     this->resetb,
   };
-  for (int i = 0; i < 7; i++) {
+  for (int i = 0; i < 9; i++) {
     toggles[i]->init();
   }
 
@@ -161,7 +161,7 @@ bool SystemIO::getEngineArm() {
 }
 
 bool SystemIO::getO2Stir() {
-  return this->mcps[MCP_INDEX_INPUT]->digitalRead(INPUT_ENGINE_ARM) == LOW;
+  return this->mcps[MCP_INDEX_INPUT]->digitalRead(INPUT_O2_STIR) == LOW;
 }
 
 bool SystemIO::getLaunch() {

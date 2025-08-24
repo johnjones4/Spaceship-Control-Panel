@@ -9,7 +9,9 @@ void ModeDebug::reset() {
 }
 
 void ModeDebug::step() {
-  Serial.println("beep");
-  delay(1000);
-  this->systemIo->playTrack(00);
+  Serial.println("-----------------------");
+  Serial.println(systemIo->getO2Stir());
+  Serial.println(systemIo->getEngineArm());
+  Serial.println(systemIo->getTowerJet());
+  Serial.println(systemIo->getMainChute());
 }

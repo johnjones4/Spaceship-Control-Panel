@@ -14,10 +14,9 @@ void ModeLand::reset() {
     this->thrust = THRUST_INITIAL;
     this->altitude = ALTITUDE_INITIAL;
     this->fuel = FUEL_INITIAL;
-    this->playedAthold = false;
-    this->playedLanding = false;
     this->playedFuel = false;
     this->start = 0;
+    this->systemIo->stopTrack();
 }
 
 void ModeLand::step() {
@@ -92,12 +91,6 @@ void ModeLand::step() {
         this->systemIo->getTFT()->drawCircle(x, y, r, ST77XX_BLACK);
     }
 
-    if (this->altitude < CALLOUT_ATHOLD_ALTITUDE && !this->playedAthold) {
-        this->systemIo->playTrack(TRACK_ATHOLD);
-    }
-    if (this->altitude < CALLOUT_LANDING_ALTITUDE && !this->playedLanding) {
-        this->systemIo->playTrack(TRACK_LANDING);
-    }
     if (this->fuel < FUEL_MIN && !this->playedFuel) {
         this->systemIo->playTrack(TRACK_60_SECS_FUEL);
     }
@@ -115,6 +108,7 @@ void ModeLand::step() {
 
     if (start == 0 && this->systemIo->getEngineArm()) {
         start = millis();
+        this->systemIo->playTrack(TRACK_GO_FOR_LANDING);
     }
 }
 

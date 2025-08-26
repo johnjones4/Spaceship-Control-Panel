@@ -22,7 +22,6 @@
 #define RANDOM_VELOCITY_CHANGE_MAX 0.25
 
 #define CALLOUT_ATHOLD_ALTITUDE (ALTITUDE_INITIAL / 2)
-#define CALLOUT_LANDING_ALTITUDE 40
 
 class ModeLand : public Mode {
 public:
@@ -41,8 +40,6 @@ private:
   int16_t lastXLine = -1;
   int16_t lastYLine = -1;
 
-  bool playedAthold;
-  bool playedLanding;
   bool playedFuel;
 
   int16_t cartesienPlotCoord(double max, double value, int16_t length);

@@ -7,18 +7,23 @@ ModeFree::ModeFree(SystemIO* systemIo) : Mode(systemIo) {
 
 }
 
+#define MAX_FUEL    9999
+#define MAX_ALT     9999
+
 #define TRACK_LAUNCH_ENGINES_START_1    11000
-#define TRACK_LAUNCH_ENGINES_START_2    12000
-#define TRACK_LAUNCH_ENGINES_START_3    13000
-#define TRACK_LAUNCH_ENGINES_START_4    14000
-#define TRACK_LAUNCH_ENGINES_START_5    15000
-#define TRACK_LAUNCH_ENGINE_FAILURE     46000
+#define TRACK_LAUNCH_ENGINES_START_2    13000
+#define TRACK_LAUNCH_ENGINES_START_3    15000
+#define TRACK_LAUNCH_ENGINES_START_4    17000
+#define TRACK_LAUNCH_ENGINES_START_5    19000
+#define TRACK_LAUNCH_LAUNCH             22000
 #define TRACK_LAUNCH_END                60000
 #define TRACK_LAND_FUEL_LIGHT           98000
 #define TRACK_LAND_CONTACT_LIGHT        108000
 #define TRACK_LAND_END                  143000
-#define TRACK_LAND_FUEL_QUANT           9000
-#define TRACK_LAND_ALT_QUANT            5000
+#define TRACK_ENGINE_ARM_IGNITION       9000
+#define TRACK_ENGINE_ARM_END            38000
+#define TRACK_TOWER_JET_ENGINE_FAIL     11000
+#define TRACK_TOWER_JET_END             63000
 
 void ModeFree::reset() {
     this->lastAudioStart = 0;
@@ -30,6 +35,7 @@ void ModeFree::reset() {
     this->systemIo->setFuelLight(false);
     this->systemIo->setFuel(0);
     this->systemIo->setAltitude(0);
+    this->systemIo->stopTrack();
 }
 
 void ModeFree::step() {
@@ -52,18 +58,18 @@ void ModeFree::handlePlayingTrack() {
             elapsed > TRACK_LAUNCH_ENGINES_START_2 ? 1 : 0,
             elapsed > TRACK_LAUNCH_ENGINES_START_3 ? 1 : 0,
             elapsed > TRACK_LAUNCH_ENGINES_START_4 ? 1 : 0,
-            elapsed > TRACK_LAUNCH_ENGINE_FAILURE ? 2 : (elapsed > TRACK_LAUNCH_ENGINES_START_5 ? 1 : 0)
+            elapsed > TRACK_LAUNCH_ENGINES_START_5 ? 1 : 0
         };
         this->systemIo->setEngineLights(e);
-        this->systemIo->setMasterAlarm(elapsed > TRACK_LAUNCH_ENGINE_FAILURE);
 
-        double pcnt = (double)elapsed / (double)TRACK_LAUNCH_END;
-        int fuel = TRACK_LAND_FUEL_QUANT - (int)(pcnt * TRACK_LAND_FUEL_QUANT);
+        double fpcnt = min(1, max(0, ((double)elapsed - TRACK_LAUNCH_ENGINES_START_1)) / (double)(TRACK_LAUNCH_END - TRACK_LAUNCH_ENGINES_START_1));
+        int fuel = MAX_FUEL - (int)(fpcnt * MAX_FUEL);
         this->systemIo->setFuel(fuel);
-        int alt = (int)(pcnt * TRACK_LAND_ALT_QUANT);
+        double apcnt = min(1, max(0, ((double)elapsed - TRACK_LAUNCH_LAUNCH)) / (double)(TRACK_LAUNCH_END - TRACK_LAUNCH_LAUNCH));
+        int alt = (int)(apcnt * MAX_ALT);
         this->systemIo->setAltitude(alt);
 
-        if (elapsed > TRACK_LAUNCH_ENGINE_FAILURE && this->systemIo->getMasterAlarm()) {
+        if (elapsed > TRACK_LAUNCH_END) {
             this->reset();
         }
         break;
@@ -80,10 +86,10 @@ void ModeFree::handlePlayingTrack() {
         this->systemIo->setFuelLight(TRACK_LAND_FUEL_LIGHT);
         this->systemIo->setContactLight(elapsed > TRACK_LAND_CONTACT_LIGHT);
         
-        double pcnt = (double)elapsed / (double)TRACK_LAND_END;
-        int fuel = TRACK_LAND_FUEL_QUANT - (int)(pcnt * TRACK_LAND_FUEL_QUANT);
+        double pcnt = min(1, (double)elapsed / (double)TRACK_LAND_CONTACT_LIGHT);
+        int fuel = MAX_FUEL - (int)(pcnt * MAX_FUEL);
         this->systemIo->setFuel(fuel);
-        int alt = TRACK_LAND_ALT_QUANT - (int)(pcnt * TRACK_LAND_ALT_QUANT);
+        int alt = MAX_ALT - (int)(pcnt * MAX_ALT);
         this->systemIo->setAltitude(alt);
 
         if (elapsed > TRACK_LAND_END) {
@@ -99,8 +105,42 @@ void ModeFree::handlePlayingTrack() {
         break;
     case TRACK_MAIN_CHUTE: {
         double pcnt = (double)elapsed / (double)TRACK_LAND_END;
-        int alt = TRACK_LAND_ALT_QUANT - (int)(pcnt * TRACK_LAND_ALT_QUANT);
+        int alt = MAX_ALT - (int)(pcnt * MAX_ALT);
         this->systemIo->setAltitude(alt);
+        break;
+    }
+    case TRACK_ENGINE_ARM: {
+        uint8_t e[5] = {
+            0,
+            0,
+            0,
+            0,
+            elapsed > TRACK_ENGINE_ARM_IGNITION ? 1 : 0,
+        };
+        this->systemIo->setEngineLights(e);
+        if (elapsed > TRACK_ENGINE_ARM_END) {
+            this->reset();
+        }
+        break;
+    }
+    case TRACK_TOWER_JET: {
+        uint8_t e[5] = {
+            1,
+            1,
+            1,
+            1,
+            elapsed > TRACK_TOWER_JET_ENGINE_FAIL ? 2 : 1
+        };
+        this->systemIo->setEngineLights(e);
+        this->systemIo->setMasterAlarm(elapsed > TRACK_TOWER_JET_ENGINE_FAIL);
+        double pcnt = min(1, (double)(elapsed) / (double)(TRACK_TOWER_JET_END));
+        int fuel = MAX_FUEL - (int)(pcnt * (MAX_FUEL/2));
+        this->systemIo->setFuel(fuel);
+        int alt = (MAX_ALT/2) + (int)(pcnt * (MAX_ALT/2));
+        this->systemIo->setAltitude(alt);
+        if (this->systemIo->getMasterAlarm()) {
+            this->reset();
+        }
         break;
     }
     default:

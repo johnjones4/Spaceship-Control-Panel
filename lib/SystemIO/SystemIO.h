@@ -91,6 +91,7 @@ public:
   void setEngineLights(uint8_t *b);
 
   void playTrack(uint8_t track);
+  void stopTrack();
 
   Adafruit_ST7735* getTFT();
 private:

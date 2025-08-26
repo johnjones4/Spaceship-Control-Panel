@@ -115,6 +115,7 @@ void SystemIO::reset() {
   uint8_t b1[5] = {0,0,0,0,0};
   this->setEngineLights(b1);
   this->tft->fillScreen(ST77XX_WHITE);
+  this->sfx->stop();
 }
   
 t_mode SystemIO::getModeSelection() {
@@ -249,6 +250,10 @@ void SystemIO::playTrack(uint8_t track) {
   Serial.println(track);
 #endif
   this->sfx->playTrack((uint8_t)track);
+}
+
+void SystemIO::stopTrack() {
+  this->sfx->stop();
 }
 
 Adafruit_ST7735* SystemIO::getTFT() {

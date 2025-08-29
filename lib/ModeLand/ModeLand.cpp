@@ -55,7 +55,7 @@ void ModeLand::step() {
         }
         double netAccel = thrustAccel + GRAVITY;
         this->deltaZ = this->deltaZ + netAccel * deltaTime;
-        this->altitude = this->altitude + (this->deltaZ * deltaTime);
+        this->altitude = max(0, this->altitude + (this->deltaZ * deltaTime));
         this->lastStep = now;
     }
 
@@ -93,6 +93,7 @@ void ModeLand::step() {
 
     if (this->fuel < FUEL_MIN && !this->playedFuel) {
         this->systemIo->playTrack(TRACK_60_SECS_FUEL);
+        this->playedFuel = true;
     }
 
     if (start > 0 && isDown) {
@@ -106,9 +107,10 @@ void ModeLand::step() {
         this->reset();
     }
 
-    if (start == 0 && this->systemIo->getEngineArm()) {
-        start = millis();
+    if (start == 0 && this->systemIo->getEngineArm() && this->systemIo->getLand()) {
         this->systemIo->playTrack(TRACK_GO_FOR_LANDING);
+        lastStep = millis();
+        start = millis();        
     }
 }
 

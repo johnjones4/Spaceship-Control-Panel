@@ -83,7 +83,7 @@ void ModeFree::handlePlayingTrack() {
             elapsed < TRACK_LAND_CONTACT_LIGHT
         };
         this->systemIo->setEngineLights(e);
-        this->systemIo->setFuelLight(TRACK_LAND_FUEL_LIGHT);
+        this->systemIo->setFuelLight(elapsed > TRACK_LAND_FUEL_LIGHT);
         this->systemIo->setContactLight(elapsed > TRACK_LAND_CONTACT_LIGHT);
         
         double pcnt = min(1, (double)elapsed / (double)TRACK_LAND_CONTACT_LIGHT);
@@ -169,5 +169,6 @@ void ModeFree::handleNextPlayingTrack() {
         this->systemIo->playTrack(next);
         this->trackPlaying = next;
         this->lastAudioStart = millis();
+        Serial.println(next);
     }
 }

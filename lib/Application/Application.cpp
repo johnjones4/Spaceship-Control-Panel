@@ -50,6 +50,8 @@ Mode* Application::modeFactory(t_mode modeType) {
   {
   case Land:
     return new ModeLand(this->systemIO);
+  case Dock:
+    return new ModeLand(this->systemIO);
   case Freeplay:
     return new ModeFree(this->systemIO);
   default:
